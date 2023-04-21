@@ -234,7 +234,48 @@ class CluenerProcessor(DataProcessor):
             examples.append(InputExample(guid=guid, text_a=text_a, labels=labels))
         return examples
 
+class OsintProcessor(DataProcessor):
+    """Processor for the chinese ner data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(self._read_json_list(os.path.join(data_dir, "train_data.json")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(self._read_json_list(os.path.join(data_dir, "dev_data.json")), "dev")
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(self._read_json_list(os.path.join(data_dir, "test_data.json")), "test")
+
+    def get_labels(self):
+        """See base class."""
+        # return ["X", "B-address", "B-book", "B-company", 'B-game', 'B-government', 'B-movie', 'B-name',
+        #         'B-organization', 'B-position','B-scene',"I-address",
+        #         "I-book", "I-company", 'I-game', 'I-government', 'I-movie', 'I-name',
+        #         'I-organization', 'I-position','I-scene',
+        #         "S-address", "S-book", "S-company", 'S-game', 'S-government', 'S-movie',
+        #         'S-name', 'S-organization', 'S-position',
+        #         'S-scene','O',"[START]", "[END]"]
+        return ["X", 'O', 'B-Threat_actor', 'I-Threat_actor', 'B-Industry', 'I-Industry', 
+                'B-Malware_tool', 'I-Malware_tool', 'B-Threat_actor_aliases', 'I-Threat_actor_aliases', 
+                'B-Geo_location', 'I-Geo_location', 'B-Target', 'I-Target', 'B-Software', 'I-Software', 
+                'B-Reference_word', 'I-Reference_word', "[START]", "[END]"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            guid = "%s-%s" % (set_type, i)
+            text_a= line['words']
+            # BIOS
+            labels = line['labels']
+            examples.append(InputExample(guid=guid, text_a=text_a, labels=labels))
+        return examples
+
 ner_processors = {
     "cner": CnerProcessor,
-    'cluener':CluenerProcessor
+    'cluener':CluenerProcessor,
+    'osint':OsintProcessor
 }

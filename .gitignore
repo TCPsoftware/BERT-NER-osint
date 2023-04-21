@@ -1,3 +1,7 @@
+
+datasets/
+prev_trained_model/chinese_roberta_wwm_ext_pytorch/pytorch_model.bin
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -31,7 +31,7 @@ class DataProcessor(object):
     @classmethod
     def _read_text(self,input_file):
         lines = []
-        with open(input_file,'r') as f:
+        with open(input_file, 'r', encoding="utf8") as f:
             words = []
             labels = []
             for line in f:
@@ -55,7 +55,7 @@ class DataProcessor(object):
     @classmethod
     def _read_json(self,input_file):
         lines = []
-        with open(input_file,'r') as f:
+        with open(input_file, 'r', encoding="utf8") as f:
             for line in f:
                 line = json.loads(line.strip())
                 text = line['text']
@@ -72,6 +72,21 @@ class DataProcessor(object):
                                 else:
                                     labels[start_index] = 'B-'+key
                                     labels[start_index+1:end_index+1] = ['I-'+key]*(len(sub_name)-1)
+                lines.append({"words": words, "labels": labels})
+        return lines
+
+    @classmethod
+    def _read_json_list(self, input_file):
+        lines = []
+        with open(input_file, 'r', encoding="utf8") as f:
+            data_lines = json.load(f)
+            for line in data_lines:
+                if len(line) == 3:
+                    if line[2] == "0":
+                        continue
+                words = line[0].split(" ")
+                labels = line[1].split(" ")
+                assert len(words) == len(labels)
                 lines.append({"words": words, "labels": labels})
         return lines
 
